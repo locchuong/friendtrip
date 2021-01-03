@@ -1,5 +1,5 @@
 var firebase = require('firebase');
-// require('dotenv').config();
+require('dotenv').config();
 
 var firebaseConfig = {
     apiKey: process.env.API_KEY,
@@ -13,8 +13,6 @@ var firebaseConfig = {
 
 // Initialize firebase App
 const db = firebase.default.initializeApp(firebaseConfig);
-// const googleProvider = new firebase.auth.GoogleAuthProvider();
-
 
 const travelerRef = db.database().ref("traveler");
 const tripRef = db.database().ref("trip");
