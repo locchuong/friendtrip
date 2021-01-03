@@ -14,7 +14,7 @@ router.post("/getItem", function (req, res, next) {
 });
 
 router.post("/getItemsList", function (req, res, next) {
-  handleGetItems = (items) => {
+  let handleGetItems = (items) => {
     let personalItems = [];
     let groupItems = [];
     let itemsLength = Object.keys(items).length;
@@ -58,14 +58,14 @@ router.post("/addItem", function (req, res, next) {
     req.body.isComplete,
   );
   // Add item to database
-  handleAddItem = (error) => {};
+  let handleAddItem = (error) => {};
   addItem(data, handleAddItem);
   // Add item to Trip Object
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     if (trip) {
       let newItemIds = [];
       if (trip.itemIds) newItemIds = trip.itemIds;
@@ -78,7 +78,7 @@ router.post("/addItem", function (req, res, next) {
 });
 
 router.post("/editItem", function (req, res, next) {
-  handleGetItem = (item) => {
+  let handleGetItem = (item) => {
     const data = generateItemJSON(
       req.body.id,
       req.body.tripId,
@@ -93,7 +93,7 @@ router.post("/editItem", function (req, res, next) {
     updateItem(data, handleUpdateItem);
   }
 
-  handleUpdateItem = (error) => {
+  let handleUpdateItem = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   }
@@ -102,11 +102,11 @@ router.post("/editItem", function (req, res, next) {
 });
 
 router.delete("/deleteItem", function (req, res, next) {
-  handleDeleteItem = (error) => {
+  let handleDeleteItem = (error) => {
     getTrip(req.body.tripId, handleGetTrip);
   }
 
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     let itemIds = [];
     for (const item of trip.itemIds) {
       if (item !== req.body.id) itemIds.push(item);
@@ -115,7 +115,7 @@ router.delete("/deleteItem", function (req, res, next) {
     updateTrip(trip, handleUpdateTrip);
   }
 
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   }

@@ -9,6 +9,8 @@ const {
   getTrip,
   updateTrip,
   deleteTrip,
+  addTrip,
+  generateTripJSON,
 } = require("../db/models/trip");
 const { deleteItem, getItemList, updateItem } = require("../db/models/item");
 const {
@@ -22,39 +24,63 @@ const {
 } = require("../db/models/destination");
 var router = express.Router();
 
-router.post("/getTrip", function (req, res, next) {
-  handleGetTrip = (trip) => {
+
+
+router.put('/createTrip', function (req, res, next) {
+  function generateId(length, chars) {
+      var result = '';
+      for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+      return result;
+  }
+
+  const id = ("trip_").concat(generateId(16, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+  const data = generateTripJSON(id, req.body.travelerId, req.body.name, Date.now(),
+                                req.body.travelerIds, [], [], [], req.body.description, 
+                                "", req.body.tripLeaders);
+
+  let handleAddTrip = (error) => {
+    var status;
+    if (error) status = 401;
+    else status = 200;
+    res.json({ status, tripId: id });
+  }
+
+  addTrip(data, handleAddTrip);
+});
+
+router.get("/getTrip/:tripId", function (req, res, next) {
+  let handleGetTrip = (trip) => {
     res.json({ trip });
   };
 
-  getTrip(req.body.tripId, handleGetTrip);
+  getTrip(req.params.tripId, handleGetTrip);
 });
 
-router.post("/getTrips", function (req, res, next) {
-  handleGetTrips = (trips) => {
+router.get("/getTrips/:tripIds", function (req, res, next) {
+  const tripIds = req.params.tripIds.split(',');
+  let handleGetTrips = (trips) => {
     res.json({ trips });
   };
-
-  getTripList(req.body.tripIds, handleGetTrips);
+  getTripList(tripIds, handleGetTrips);
 });
 
-router.post("/getTravelers", function (req, res, next) {
-  handleGetTravelers = (travelers) => {
+router.get("/getTravelers/:travelerIds", function (req, res, next) {
+  const travelerIds = req.params.travelerIds.split(',');
+  let handleGetTravelers = (travelers) => {
     res.json({ travelers });
   };
-
-  getTravelerList(req.body.travelerIds, handleGetTravelers);
+  getTravelerList(travelerIds, handleGetTravelers);
 });
 
 router.put("/addTraveler", function (req, res, next) {
-  handleGetTraveler = (traveler) => {
+  let handleGetTraveler = (traveler) => {
     if (!traveler.tripIds) traveler.tripIds = [];
     traveler.tripIds.push(req.body.tripId);
 
     updateTraveler(traveler, handleUpdateTraveler);
   };
 
-  handleUpdateTraveler = (error) => {
+  let handleUpdateTraveler = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -62,8 +88,8 @@ router.put("/addTraveler", function (req, res, next) {
   getTraveler(req.body.travelerId, handleGetTraveler);
 });
 
-router.post("/updateItinerary", function (req, res, next) {
-  handleUpdateItinerary = (error) => {
+router.put("/updateItinerary", function (req, res, next) {
+  let handleUpdateItinerary = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -71,8 +97,8 @@ router.post("/updateItinerary", function (req, res, next) {
   updateTrip(req.body, handleUpdateItinerary);
 });
 
-router.post("/updateTrip", function (req, res, next) {
-  handleUpdateTrip = (error) => {
+router.put("/updateTrip", function (req, res, next) {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -80,8 +106,8 @@ router.post("/updateTrip", function (req, res, next) {
   updateTrip(req.body, handleUpdateTrip);
 });
 
-router.post("/sendInvite", function (req, res, next) {
-  handleGetTraveler = (traveler) => {
+router.put("/sendInvite", function (req, res, next) {
+  let handleGetTraveler = (traveler) => {
     if (!traveler.invitations) traveler.invitations = [];
 
     // Don't give a Traveler multiple of the same invite.
@@ -96,7 +122,7 @@ router.post("/sendInvite", function (req, res, next) {
     updateTraveler(traveler, handleUpdateTraveler);
   };
 
-  handleUpdateTraveler = (error) => {
+  let handleUpdateTraveler = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -105,7 +131,7 @@ router.post("/sendInvite", function (req, res, next) {
 });
 
 router.post("/addTripLeader", function (req, res, next) {
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -113,7 +139,7 @@ router.post("/addTripLeader", function (req, res, next) {
 });
 
 router.delete("/deleteTrip", function (req, res, next) {
-  handleGetTraveler = (travelerList) => {
+  let handleGetTraveler = (travelerList) => {
     let travelerListLength = Object.keys(travelerList).length;
     for (let i = 0; i < travelerListLength; i++) {
       let trips;
@@ -143,33 +169,33 @@ router.delete("/deleteTrip", function (req, res, next) {
     deleteTrip(req.body.tripId, handleDeleteTrip);
   };
   // Destination Callbacks
-  handleGetDestinations = (destinations) => {
+  let handleGetDestinations = (destinations) => {
     let destinationsListLength = Object.keys(destinations).length;
     for (let l = 0; l < destinationsListLength; l++) {
       deleteDestination(destinations[l].id, handleDeleteDestination);
     }
   };
-  handleDeleteDestination = (error) => {};
+  let handleDeleteDestination = (error) => {};
   // Item Callbacks
-  handleGetItems = (items) => {
+  let handleGetItems = (items) => {
     let itemsListLength = Object.keys(items).length;
     for (let k = 0; k < itemsListLength; k++) {
       deleteItem(items[k].id, handleDeleteItem);
     }
   };
-  handleDeleteItem = (error) => {};
+  let handleDeleteItem = (error) => {};
   // Expense Callbacks
-  handleGetExpenses = (expenses) => {
+  let handleGetExpenses = (expenses) => {
     let expensesListLength = Object.keys(expenses).length;
     for (let m = 0; m < expensesListLength; m++) {
       deleteExpense(expenses[m].id, handleDeleteExpense);
     }
   };
-  handleDeleteExpense = (error) => {};
+  let handleDeleteExpense = (error) => {};
   // Travler Callback
-  handleUpdateTraveler = (error) => {};
+  let handleUpdateTraveler = (error) => {};
   // Trip Callback
-  handleDeleteTrip = (error) => {
+  let handleDeleteTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -177,9 +203,9 @@ router.delete("/deleteTrip", function (req, res, next) {
   getTravelerList(req.body.travelerIds, handleGetTraveler);
 });
 
-router.post("/leaveTrip", function (req, res, next) {
+router.put("/leaveTrip", function (req, res, next) {
   // For a Traveler Object, remove the trip from their tripIds
-  handleGetTraveler = (traveler) => {
+  let handleGetTraveler = (traveler) => {
     let trips;
     let tripsLength;
     if (traveler.tripIds) {
@@ -193,11 +219,11 @@ router.post("/leaveTrip", function (req, res, next) {
       updateTraveler(traveler, handleUpdateTraveler);
     }
   };
-  handleUpdateTraveler = (error) => {};
+  let handleUpdateTraveler = (error) => {};
   getTraveler(req.body.travelerId, handleGetTraveler);
 
   // For a Trip Object, remove the traveler from travelerIds and from tripLeaders (if trip leader)
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     // Handle removing traveler from Trip Object's travelerIds
     let travelerIds;
     let travelerIdsLength;
@@ -231,7 +257,7 @@ router.post("/leaveTrip", function (req, res, next) {
     // Update the Trip Object
     updateTrip(trip, handleUpdateTrip);
   };
-  handleGetExpenses = (expenses) => {
+  let handleGetExpenses = (expenses) => {
     if (expenses) {
       let expensesListLength = Object.keys(expenses).length;
       for (let n = 0; n < expensesListLength; n++) {
@@ -247,9 +273,9 @@ router.post("/leaveTrip", function (req, res, next) {
       }
     }
   };
-  handleUpdateExpense = (error) => {};
+  let handleUpdateExpense = (error) => {};
   // For each item in the Trip, if the person leaving is assigned to it, blank out the assignee
-  handleGetItems = (items) => {
+  let handleGetItems = (items) => {
     if (items) {
       let itemsListLength = Object.keys(items).length;
       for (let l = 0; l < itemsListLength; l++) {
@@ -262,9 +288,9 @@ router.post("/leaveTrip", function (req, res, next) {
       }
     }
   };
-  handleDeleteItem = (error) => {};
-  handleUpdateItem = (error) => {};
-  handleUpdateTrip = (error) => {
+  let handleDeleteItem = (error) => {};
+  let handleUpdateItem = (error) => {};
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -275,9 +301,9 @@ router.post("/alertTraveler", function (req, res, next) {
   res.send("Not Implemented!");
 });
 
-router.post("/acceptInvite", function (req, res, next) {
+router.put("/acceptInvite", function (req, res, next) {
   // Get Traveler
-  handleGetTraveler = (traveler) => {
+  let handleGetTraveler = (traveler) => {
     // Remove invitation
     var invitations = [];
     if (traveler.invitations) {
@@ -296,9 +322,9 @@ router.post("/acceptInvite", function (req, res, next) {
     updateTraveler(data, handleUpdateTraveler);
   };
 
-  handleUpdateTraveler = (error) => {};
+  let handleUpdateTraveler = (error) => {};
 
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     // Add Traveler
     var travelerIds = trip.travelerIds;
     travelerIds.push(req.body.travelerId);
@@ -308,7 +334,7 @@ router.post("/acceptInvite", function (req, res, next) {
     updateTrip(data, handleUpdateTrip);
   };
 
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
@@ -318,8 +344,8 @@ router.post("/acceptInvite", function (req, res, next) {
   getTrip(req.body.tripId, handleGetTrip);
 });
 
-router.post("/rejectInvite", function (req, res, next) {
-  handleGetTraveler = (traveler) => {
+router.put("/rejectInvite", function (req, res, next) {
+  let handleGetTraveler = (traveler) => {
     var invitations = [];
     if (traveler.invitations) {
       for (const invite of traveler.invitations) {
@@ -331,7 +357,7 @@ router.post("/rejectInvite", function (req, res, next) {
     updateTraveler(data, handleUpdateTraveler);
   };
 
-  handleUpdateTraveler = (error) => {
+  let handleUpdateTraveler = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };

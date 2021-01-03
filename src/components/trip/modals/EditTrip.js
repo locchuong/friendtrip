@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 
 class EditTrip extends Component {
-    constructor(props) {
-        super(props);
-    }
+
 
     updateTrip = (event) => {
         event.preventDefault();
@@ -16,7 +14,7 @@ class EditTrip extends Component {
         }
 
         fetch("/trip/updateTrip", {
-            method: "POST",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },

@@ -79,36 +79,22 @@ class Friends extends Component {
   }
 
   getFriends = () => {
-    fetch("/account/getFriends", {
-      method: "POST",
+    fetch("/account/getFriends/" + this.getUserId(), {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: this.getUserId() }),
+      }
     }).then((res) => res.json()).then((res) => {
       this.getFriendInvitations(res.friends)
     });
   }
 
   getFriendInvitations = (friends) => {
-    fetch("/account/getFriendInvites", {
-      method: "POST",
+    fetch("/account/getFriendInvites/" + this.getUserId(), {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: this.getUserId() }),
-    }).then((res) => res.json()).then((res) => {
-      this.getFriendInvitations(res.friends)
-    });
-  }
-
-  getFriendInvitations = (friends) => {
-    fetch("/account/getFriendInvites", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: this.getUserId() }),
+      }
     }).then((res) => res.json()).then((res) => {
       this.setState({ friends, invitations: res.invitations });
     });
@@ -196,6 +182,7 @@ class Friends extends Component {
   }
 
   render() {
+
     return (
       <div className="w-100 h-100">
         <div className="friends-page-header">
@@ -213,11 +200,11 @@ class Friends extends Component {
         </div>
         <hr></hr>
 
-        <Card className="trips-list" style={{ width: "100%" }}>
-          <Card.Header className="trip-list-header">
-            <h2> Friend Requests </h2>
+        <Card className="friend-request-list" style={{ width: "100%" }}>
+          <Card.Header className="friend-request-list-header pb-1 pt-1">
+            <h4> Friend Requests </h4>
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="friend-request-list-body">
             <Container fluid>
               <Row className="m-0 text-center">
                 <Col xs={2}>
@@ -234,10 +221,10 @@ class Friends extends Component {
         </Card>
 
         <Card className="mt-3" style={{ width: "100%" }} variant="Light">
-          <Card.Header className="friend-list-header">
-            <h2> Friend's List</h2>
-            <Form onSubmit={this.addFriend} className="add-friend-form text-center">
-              <h5 className="m-0 ">Find Friends</h5>
+          <Card.Header className="friend-list-header pb-1 pt-1">
+            <h4 className="mb-0" style={{whiteSpace: "nowrap"}}>Friend's List</h4>
+            <Form onSubmit={this.addFriend} className="add-friend-form">
+              <h5 className="m-0">Find Friends</h5>
               <Form.Row className="m-0 p-0 ml-2">
                 <Form.Group className="m-0" controlId="formBasicEmail">
                   <Form.Control
@@ -246,7 +233,7 @@ class Friends extends Component {
                     placeholder="Enter friend's email"
                   />
                 </Form.Group>
-                <Button className="ml-2" variant="success" type="submit">
+                <Button className="btn-addFriend ml-2" variant="success" type="submit">
                   Add
                 </Button>
               </Form.Row>
@@ -268,8 +255,7 @@ class Friends extends Component {
         </Card>
         <img
           src={friendsPageImage}
-          width="40%"
-          className="d-inline-block page-background-image mr-5"
+          className="page-background-image mr-5"
           alt="tripPageImage"
           id="tripPageImage"
         />

@@ -1,18 +1,18 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
 
-var indexRouter = require('./routes/index');
-var accountRouter = require('./routes/account');
-var tripRouter = require('./routes/trip');
-var destinationRouter = require('./routes/destination');
-var itemRouter = require('./routes/item');
-var expenseRouter = require('./routes/expense');
+const indexRouter = require('./routes/index');
+const accountRouter = require('./routes/account');
+const tripRouter = require('./routes/trip');
+const destinationRouter = require('./routes/destination');
+const itemRouter = require('./routes/item');
+const expenseRouter = require('./routes/expense');
 
-var app = express();
+const app = express();
 
 app.use(cors());
 app.use(logger('dev'));
@@ -26,6 +26,7 @@ app.use('/trip', tripRouter);
 app.use('/destination', destinationRouter);
 app.use('/item', itemRouter);
 app.use('/expense', expenseRouter);
+
 app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', '/build/index.html'));
 })

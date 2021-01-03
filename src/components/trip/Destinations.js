@@ -43,21 +43,21 @@ class Destinations extends Component {
   };
 
   getDestinationsJSON = (destinationIds) => {
-    const data = {
-      tripId: this.props.tripId,
-      destinationIds,
-    };
-    fetch("/destination/getDestinations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({ destinations: res.destinations });
-      });
+    if(destinationIds) {
+      fetch("/destination/getDestinations/" + destinationIds, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          this.setState({ destinations: res.destinations });
+        });
+    }
+    else {
+      this.setState({destinations: []});
+    }
   };
   refreshDestinations = () => {
     this.getDestinationsJSON(this.props.destinationIds);
@@ -71,14 +71,14 @@ class Destinations extends Component {
         onClick={() => {
           this.openViewDestinationModal(destination);
         }}
-        className="tripThumbnail mb-2"
+        className="tripThumbnail mb-2 pb-1 pt-1"
         key={destination.id}
       >
         <Row style={{ color: "black" }} className="align-items-center text-center">
-          <Col xs={2}>{destination.name}</Col>
-          <Col xs={2}>{destination.startDate}</Col>
-          <Col xs={2}>{destination.endDate}</Col>
-          <Col>{destination.description}</Col>
+          <Col xs={2}><p>{destination.name}</p></Col>
+          <Col xs={2}><p>{destination.startDate}</p></Col>
+          <Col xs={2}><p>{destination.endDate}</p></Col>
+          <Col><p>{destination.description}</p></Col>
         </Row>
       </Alert>
     );
@@ -95,7 +95,7 @@ class Destinations extends Component {
 
   render() {
     return (
-      <div>
+      <div className="h-100">
         <ViewDestination
           kind="View"
           tripId={this.props.tripId}
@@ -115,7 +115,7 @@ class Destinations extends Component {
           refreshTrip={this.props.refreshTrip}
           refreshDestinations={this.refreshDestinations}
         />
-        <Card className="destinations-list">
+        <Card className="destinations-list h-100">
           <Card.Header className="destinations-list-header p-1 pl-3">
           <img
             src={destinationIcon}
@@ -131,23 +131,23 @@ class Destinations extends Component {
               variant="success"
               onClick={this.openAddDestinationModal}
             >
-              Add Destination
+              📋 Add
             </Button>
           </Card.Header>
           <Card.Body className="destinations-list-body">
             <Container fluid>
               <Row className="m-0 text-center">
                 <Col xs={2}>
-                  <h5>Destination</h5>
+                  <h5 className="destinations-list-text">Destination</h5>
                 </Col>
                 <Col xs={2}>
-                  <h5>Start Date</h5>
+                  <h5 className="destinations-list-text">Start Date</h5>
                 </Col>
                 <Col xs={2}>
-                  <h5>End Date</h5>
+                  <h5 className="destinations-list-text">End Date</h5>
                 </Col>
                 <Col>
-                  <h5>Description</h5>
+                  <h5 className="destinations-list-text">Description</h5>
                 </Col>
               </Row>
               {this.renderDestinations()}

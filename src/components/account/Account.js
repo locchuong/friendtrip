@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button, Card, ListGroup } from "react-bootstrap";
+import { Card, ListGroup } from "react-bootstrap";
 import "../../Stylesheets/Account.css";
 import editIcon from "../../Media/accountEditIcon.svg";
 import EditName from "./modals/EditName";
 import EditUsername from "./modals/EditUsername";
-
+import accountIcon from "../../Media/accountIcon.svg";
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -53,12 +53,25 @@ class Account extends Component {
           handleClose={this.closeEditUsernameModal}
           centered
           />
-          <h2> General Account Settings</h2>
+          <div className="account-page-header">
+          <img
+            src={accountIcon}
+            width="40"
+            height="40"
+            className="d-inline-block align-top mr-2"
+            alt="accountIcon"
+            id="accountIcon"
+          />
+          <h1 className="d-inline-block">
+            <strong> General Account Settings</strong>
+          </h1>
+        </div>
+        <hr></hr>
           <Card style={{ width: "100%" }}>
             <Card.Body>
               <ListGroup variant="flush" className="settingsList">
                 <ListGroup.Item
-                  className="settingsListItem"
+                  className="settingsListItem pt-2 pb-2"
                   action
                   onClick={() => this.openEditNameModal()}
                 >
@@ -77,7 +90,7 @@ class Account extends Component {
                   </div>
                 </ListGroup.Item>
                 <ListGroup.Item
-                  className="settingsListItem"
+                  className="settingsListItem pt-2 pb-2"
                   action
                   onClick={() => this.openEditUsernameModal()}
                 >
@@ -96,7 +109,7 @@ class Account extends Component {
                   </div>
                 </ListGroup.Item>
                 <ListGroup.Item
-                  className="settingsListItem"
+                  className="settingsListItem pt-2 pb-2"
                   disabled
                 >
                   <strong>Email</strong>
@@ -105,7 +118,7 @@ class Account extends Component {
                   </div>
                 </ListGroup.Item>
                 <ListGroup.Item
-                  className="settingsListItem"
+                  className="settingsListItem pt-2 pb-2"
                   disabled
                 >
                   <strong>Account Creation Date</strong>

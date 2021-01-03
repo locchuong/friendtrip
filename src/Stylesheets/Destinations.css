@@ -1,6 +1,8 @@
 .destinations-list {
     background-color: #EBEAF7;
     border: 1px solid #81a6da;
+    border-radius: 15px;
+    overflow: hidden;
 }
 .destinations-list-header {
     display: flex;
@@ -10,6 +12,15 @@
 }
 .destinations-list-body {
     background-color: #ffffff;
+}
+.destinations-list-body > div > div > div {
+    padding: 0px;
+}
+.destinations-list-body > div > div > div > div {
+    padding: 0px;
+}
+.destinations-list-text {
+    font-size: calc(0.75vw + 0.25rem);
 }
 .destinations-list-icon {
     filter: invert(1);

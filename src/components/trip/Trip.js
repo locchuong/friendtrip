@@ -12,7 +12,6 @@ import ConfirmLeave from "./modals/ConfirmLeave";
 import EditTrip from "./modals/EditTrip";
 import AddTripLeader from "./modals/AddTripLeader";
 
-import Fade from "react-reveal/Fade";
 import tripIcon from "../../Media/tripIcon.svg";
 import "../../Stylesheets/Trip.css";
 
@@ -27,6 +26,7 @@ class Trip extends Component {
       showAddItem: false,
       showAddTripLead: false,
       tripData: {},
+      travelers: {},
     };
 
     // Handle modal visibility
@@ -80,28 +80,50 @@ class Trip extends Component {
   };
 
   closeAddTripLeaderModal = () => {
-    this.setState({ showAddTripLead: false })
-  }
+    this.setState({ showAddTripLead: false });
+  };
 
   openAddTripLeaderModal = () => {
-    this.setState({ showAddTripLead: true })
-  }
+    this.setState({ showAddTripLead: true });
+  };
 
   // Retrieve all releveant data
   getTripJSON = (callback) => {
-    fetch("/trip/getTrip", {
-      method: "POST",
+    fetch("/trip/getTrip/" + this.props.tripId, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ tripId: this.props.tripId }),
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({ tripData: res.trip, render: true });
-        if(callback) callback();
+        // this.setState({ tripData: res.trip, render: true });
+        // if (callback) callback();
+        this.getTravelersJSON(res.trip, callback);
       });
   };
+
+
+
+  getTravelersJSON = (tripData, callback) => {
+    fetch("/trip/getTravelers/" + tripData.travelerIds, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        var travelers = {};
+        for (const traveler of res.travelers) {
+          travelers[traveler.id] = traveler.firstName + " " + traveler.lastName;
+        }
+        this.setState({ travelers, tripData, render: true});
+        if(callback) callback();
+        console.log(travelers);
+      });
+  };
+
 
   // Returns id of current user (Similar to Email, but without the dot)
   getUserId = () => {
@@ -115,13 +137,13 @@ class Trip extends Component {
 
   isTripOwner = () => {
     return this.state.tripData.travelerId === this.props.traveler.id;
-  }
+  };
 
   // Delete Trip Button [Only visible to Trip Leaders, includes Trip Owner]
   showDeleteTrip = () => {
     if (this.isTripLeader())
       return (
-        <div> 
+        <div>
           <Button
             variant="danger"
             className="float-right ml-1"
@@ -166,7 +188,6 @@ class Trip extends Component {
 
   render() {
     if (!this.state.render) return <div></div>;
-    if (!this.state.tripData.id) this.refreshTripJSON();
     return (
       <div className="w-100 h-100">
         <div className="trip-page-header">
@@ -183,6 +204,7 @@ class Trip extends Component {
           </h1>
         </div>
         <hr></hr>
+        {/* MODALS */}
         <ConfirmDelete
           tripId={this.state.tripData.id}
           travelerIds={this.state.tripData.travelerIds}
@@ -192,7 +214,7 @@ class Trip extends Component {
           history={this.props.history}
           show={this.state.showDeleteTrip}
           refreshTrip={this.refreshTripJSON}
-          redirectTrip={this.props.redirectTrip}
+          switchPage={this.props.switchPage}
           handleClose={this.closeDeleteTripModal}
         ></ConfirmDelete>
         <ConfirmLeave
@@ -202,7 +224,7 @@ class Trip extends Component {
           history={this.props.history}
           show={this.state.showLeaveTrip}
           refreshTrip={this.refreshTripJSON}
-          redirectTrip={this.props.redirectTrip}
+          switchPage={this.props.switchPage}
           handleClose={this.closeLeaveTripModal}
         ></ConfirmLeave>
         <AddTripLeader
@@ -213,8 +235,7 @@ class Trip extends Component {
           show={this.state.showAddTripLead}
           refreshTrip={this.refreshTripJSON}
           handleClose={this.closeAddTripLeaderModal}
-        >
-        </AddTripLeader>
+        ></AddTripLeader>
         <EditTrip
           tripId={this.state.tripData.id}
           name={this.state.tripData.name}
@@ -223,28 +244,27 @@ class Trip extends Component {
           refreshTrip={this.refreshTripJSON}
           handleClose={this.closeEditTripModal}
         ></EditTrip>
-
+        {/* Trip Details */}
         <Card className="trip-list w-100 mb-5">
-          <Card.Header className="trip-list-header">
-            <h2>{this.state.tripData.name}</h2>
-          </Card.Header>
           <Card.Body className="trip-list-body p-4">
-            <h5 className="pl-3"> <strong>Description:</strong> {this.state.tripData.description}</h5>
+            <h2 className="pl-3">{this.state.tripData.name}</h2>
+            <h5 className="pl-3">
+              {" "}
+              <strong>Description:</strong> {this.state.tripData.description}
+            </h5>
             <hr className="mr-3 ml-3"></hr>
             <Container fluid>
+              {/* Notes */}
               <Row>
-                <Col>
+                <Col className="mb-3" md={12} lg={3}>
                   <Notes
                     id={this.state.tripData.id}
                     notes={this.state.tripData.itinerary}
                     refreshTrip={this.refreshTripJSON}
                   />
                 </Col>
-              </Row>
-              <br></br>
-
-              <Row>
-                <Col>
+              {/* Destinations */}
+                <Col className="mb-3" md={12} lg={9}>
                   <Destinations
                     tripId={this.state.tripData.id}
                     travelerId={this.props.traveler.id}
@@ -253,13 +273,13 @@ class Trip extends Component {
                   />
                 </Col>
               </Row>
-              <br></br>
-
+              {/* Items */}
               <Row>
-                <Col xs={8}>
+                <Col md={12} lg={8}>
                   <Items
                     travelerId={this.props.traveler.id}
                     travelerIds={this.state.tripData.travelerIds}
+                    travelers={this.state.travelers}
                     tripId={this.state.tripData.id}
                     itemIds={this.state.tripData.itemIds}
                     category="Group"
@@ -268,6 +288,7 @@ class Trip extends Component {
                   <Items
                     travelerId={this.props.traveler.id}
                     travelerIds={this.state.tripData.travelerIds}
+                    travelers={this.state.travelers}
                     tripId={this.state.tripData.id}
                     itemIds={this.state.tripData.itemIds}
                     category="Personal"
@@ -276,12 +297,13 @@ class Trip extends Component {
                   <Expenses
                     travelerId={this.props.traveler.id}
                     travelerIds={this.state.tripData.travelerIds}
+                    travelers={this.state.travelers}
                     tripId={this.state.tripData.id}
                     expenseIds={this.state.tripData.expenseIds}
                     refreshTrip={this.refreshTripJSON}
                   />
                 </Col>
-                <Col>
+                <Col md={12} lg={4}>
                   <Travelers
                     id={this.state.tripData.id}
                     tripId={this.state.tripData.id}
@@ -298,9 +320,14 @@ class Trip extends Component {
 
               <Row>
                 <Col>
-                  <Button className="float-left ml-1" onClick={this.openEditTripModal}>Edit Trip</Button>
-                  {this.showDeleteTrip()}{this.showLeaveTrip()}
-                  
+                  <Button
+                    className="float-left ml-1"
+                    onClick={this.openEditTripModal}
+                  >
+                    Edit Trip
+                  </Button>
+                  {this.showDeleteTrip()}
+                  {this.showLeaveTrip()}
                 </Col>
               </Row>
             </Container>

@@ -2,26 +2,34 @@
   display: flex;
   justify-content: space-between;
   background-color: #a7ccff;
+  width: 100%;
 }
 .homepage-left-image {
+  display: inline-block;
   opacity: 0.5;
   position: absolute;
   bottom: 0px;
 }
 .homepage-left {
-  width: 20%;
-  background-color: #166AE0;
+  width: 15%;
+  background-color: #ffffff;
   height: 100vh;
   position: sticky;
   top: 0;
 }
+.homepage-left-minimized {
+  min-width: 80px;
+  width: 5%;
+}
 .homepage-right {
   display: flex;
   justify-content: center;
-  width: 80%;
+  width: 85%;
   background-color: #f0f2f5;
   z-index: 0;
+  padding: 3rem;
 }
+
 /* Wrapper for sticky profile and dropdown-menu */
 .homepage-account {
   display: flex;
@@ -33,7 +41,8 @@
 }
 /* Sticky profile (Top-right) */
 .homepage-profile {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   border-radius: 15px;
   color: white;
   background-color: #166ae0;
@@ -44,6 +53,7 @@
 /* Sticky dropdown menu (Top-right) */
 .profile-dropdown {
   background-color: #166ae0;
+  width: 100%;
 }
 .profile-dropdown:hover,
 .profile-dropdown:focus,
@@ -68,10 +78,57 @@
   filter: invert(1);
 }
 .page-background-image {
+  display: inline-block;
   opacity: 0.2;
   position: absolute;
   right: 0;
   bottom: 0;
   pointer-events: none;
   z-index: -1;
+  width: 40%;
+}
+.toggleNavbar {
+  position: absolute;
+  left: 15vw;
+  top: 5vw;
+}
+@media only screen and (max-width: 1200px) {
+  .page-background-image {
+    width: 60%;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .homepage-left-image {
+    display:none;
+  }
+  .homepage-left {
+    width: calc(992px / 10);
+  }
+  .homepage-right {
+    width: 90%;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .homepage-left {
+    width: calc(768px / 10);
+  }
+  .homepage-right {
+    width: 90%;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .homepage-account {
+    top: 0.25rem;
+    right: 0.25rem;
+  }
+  .page-background-image {
+    display: none;
+  }
+  .homepage-right {
+    padding: 0.5rem;
+    padding-top: 4rem;
+  }
+  .homepage-account > * {
+    transform:scale(0.75);
+  }
 }

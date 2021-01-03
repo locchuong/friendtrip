@@ -10,15 +10,16 @@ const {
 const { getTrip, addTrip, updateTrip } = require("../db/models/trip");
 var router = express.Router();
 
-router.post("/getDestination", function (req, res, next) {
+router.get("/getDestination", function (req, res, next) {
   res.send("Not Implemented!");
 });
 
-router.post("/getDestinations", function (req, res, next) {
-  handleGetDestinationList = (destinations) => {
+router.get("/getDestinations/:destinationIds", function (req, res, next) {
+  const destinationIds = req.params.destinationIds.split(',');
+  let handleGetDestinationList = (destinations) => {
     res.json({ destinations });
   };
-  getDestinationList(req.body.destinationIds, handleGetDestinationList);
+  getDestinationList(destinationIds, handleGetDestinationList);
 });
 
 router.post("/addDestination", function (req, res, next) {
@@ -48,14 +49,14 @@ router.post("/addDestination", function (req, res, next) {
     req.body.destAddress
   );
   // Add Destination Object
-  handleAddDestination = (error) => {};
+  let handleAddDestination = (error) => {};
   addDestination(data, handleAddDestination);
 
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   };
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     if (trip) {
       let newDestinationIds = [];
       if (trip.destinationIds) newDestinationIds = trip.destinationIds;
@@ -67,8 +68,8 @@ router.post("/addDestination", function (req, res, next) {
   getTrip(req.body.tripId, handleGetTrip);
 });
 
-router.post("/editDestination", function (req, res, next) {
-  handleGetDestination = (destination) => {
+router.put("/editDestination", function (req, res, next) {
+  let handleGetDestination = (destination) => {
     const data = generateDestinationJSON(
       req.body.id,
       req.body.tripId,
@@ -84,7 +85,7 @@ router.post("/editDestination", function (req, res, next) {
     updateDestination(data, handleUpdateDestination);
   }
 
-  handleUpdateDestination = (error) => {
+  let handleUpdateDestination = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   }
@@ -93,11 +94,11 @@ router.post("/editDestination", function (req, res, next) {
 });
 
 router.delete("/deleteDestination", function (req, res, next) {
-  handleDeleteDestination = (error) => {
+  let handleDeleteDestination = (error) => {
     getTrip(req.body.tripId, handleGetTrip);
   }
 
-  handleGetTrip = (trip) => {
+  let handleGetTrip = (trip) => {
     let destinationIds = [];
     for (const destination of trip.destinationIds) {
       if (destination !== req.body.id) destinationIds.push(destination);
@@ -106,7 +107,7 @@ router.delete("/deleteDestination", function (req, res, next) {
     updateTrip(trip, handleUpdateTrip);
   }
 
-  handleUpdateTrip = (error) => {
+  let handleUpdateTrip = (error) => {
     if (error) res.sendStatus(401);
     else res.sendStatus(200);
   }

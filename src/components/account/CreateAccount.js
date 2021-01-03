@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 import "../../Stylesheets/CreateAccount.css";
 import Fade from "react-reveal/Fade";
 import friendtripLogo from "../../Media/friendtripLogo.svg";
+import signupImage from "../../Media/signupImage.svg";
 
 class CreateAccount extends Component {
-  constructor(props) {
-    super(props);
-  }
   createAccount = (event) => {
     event.preventDefault();
 
@@ -32,83 +30,65 @@ class CreateAccount extends Component {
       .then((res) => {
         if (res.code === "auth/email-already-in-use") {
           alert("This email is already in use.");
-        }
-        else if (res.code === "auth/weak-password") {
+        } else if (res.code === "auth/weak-password") {
           alert("Your password is too weak.");
-        }
-        else {
-          localStorage.setItem("id", data.email.replace('.', ''));
-          this.props.history.push("/home");
+        } else {
+          this.props.history.push("/");
+          alert(`A verification link has been sent to ${data.email}`);
         }
       });
   };
 
   redirectOnLogin = () => {
     if (localStorage.getItem("id")) this.props.history.push("/home");
-  }
+  };
 
   render() {
     return (
-      <Container fluid className="vh-100">
+      <div className="signup-root vh-100">
         {this.redirectOnLogin()}
-        <Row className="h-100">
-          <Col xs={4} className="p-0">
-            <Fade left>
-              <div className="signup-left">
+        <Fade delay={250}>
+          <Container className="signup-content">
+            <Row noGutters className="h-100 w-100">
+              <Col className="signup-content-left h-100 d-none d-lg-block">
                 <img
                   src={friendtripLogo}
-                  width="100"
-                  height="100"
-                  className="d-inline-block align-top mr-2 rounded-circle landingLogo"
-                  alt="friendTrip logo"
+                  className="align-top signup-logo-left"
+                  alt="friendtripLogo logo"
                   id="friendtripLogo"
                 />
-                <div className="signup-content">
-                  <h1> Become a member!</h1>
-                  <h4 className="mt-3">Gain access to...</h4>
-                  <ul className="mt-3 align-center text-left">
-                    <li>
-                      <h5> A collaborative task management interface </h5>
-                    </li>
-                    <li>
-                      <h5> Trip destination planning </h5>
-                    </li>
-                    <li>
-                      <h5> User-friendly expense allocation </h5>
-                    </li>
-                    <li>
-                      <h5> And many more features! </h5>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </Fade>
-          </Col>
-          <Col xs={8} className="p-0 signup-right">
-            <Fade right>
-              <Card
-                border="secondary"
-                style={{
-                  width: "48rem",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}
-              >
-                <Card.Header className="border-0 signup-header">
-                  <Card.Title style={{ textAlign: "center", margin: "0px" }}>
-                    Create an Account
-                  </Card.Title>
-                </Card.Header>
-                <Card.Body className="signup-body">
+                <img
+                  src={signupImage}
+                  className="align-top signup-image-left"
+                  alt="signupImage"
+                  id="signupImage"
+                />
+              </Col>
+              <Col className="signup-content-right h-100">
+                <img
+                  src={friendtripLogo}
+                  className="align-top signup-logo-right"
+                  alt="accountIcon logo"
+                  id="accountIcon"
+                />
+                <div className="signup-image-right"></div>
+                <div className="signup-register-form">
+                  <h1>Create An Account</h1>
+                  <h5>
+                    To get started, please register with your personal
+                    information by username, email address, name, and password.
+                  </h5>
+                  <br></br>
                   <Form onSubmit={this.createAccount}>
                     <Form.Row>
+                      {/* USERNAME */}
                       <Form.Group
                         as={Col}
                         className="p-0 m-1"
                         controlId="formGridUsername"
                       >
                         <Form.Label className="pl-1 m-0">
-                          <strong>Username</strong>
+                          <h5>Username</h5>
                         </Form.Label>
                         <Form.Control
                           name="username"
@@ -118,36 +98,34 @@ class CreateAccount extends Component {
                         />
                         <span className="signup-input-border"></span>
                       </Form.Group>
-
+                      {/* EMAIL ADDRESS */}
                       <Form.Group
                         as={Col}
                         className="p-0 m-1"
                         controlId="formGridEmail"
                       >
                         <Form.Label className="pl-1 m-0">
-                          <strong>Email Address</strong>
+                          <h5>Email Address</h5>
                         </Form.Label>
-
                         <Form.Control
                           name="email"
                           type="email"
                           placeholder="Enter Email"
                           className="signup-input pl-1"
                         />
-                        <span class="signup-input-border"></span>
+                        <span className="signup-input-border"></span>
                       </Form.Group>
                     </Form.Row>
-
                     <Form.Row>
+                      {/* FIRST NAME */}
                       <Form.Group
                         as={Col}
                         className="p-0 m-1"
                         controlId="formGridFirst"
                       >
                         <Form.Label className="pl-1 m-0">
-                          <strong>First Name</strong>
+                          <h5>First Name</h5>
                         </Form.Label>
-
                         <Form.Control
                           name="first"
                           type="first"
@@ -156,16 +134,15 @@ class CreateAccount extends Component {
                         />
                         <span className="signup-input-border"></span>
                       </Form.Group>
-
+                      {/* LAST NAME */}
                       <Form.Group
                         as={Col}
                         className="p-0 m-1"
                         controlId="formGridLast"
                       >
                         <Form.Label className="pl-1 m-0">
-                          <strong>Last Name</strong>
+                          <h5>Last Name</h5>
                         </Form.Label>
-
                         <Form.Control
                           name="last"
                           type="last"
@@ -175,17 +152,16 @@ class CreateAccount extends Component {
                         <span className="signup-input-border"></span>
                       </Form.Group>
                     </Form.Row>
-
                     <Form.Row>
+                      {/* PASSWORD */}
                       <Form.Group
                         as={Col}
                         className="p-0 m-1"
                         controlId="formGridPassword"
                       >
                         <Form.Label className="pl-1 m-0">
-                          <strong>Password</strong>
+                          <h5>Password</h5>
                         </Form.Label>
-
                         <Form.Control
                           name="password"
                           type="password"
@@ -195,24 +171,29 @@ class CreateAccount extends Component {
                         <span className="signup-input-border"></span>
                       </Form.Group>
                     </Form.Row>
-
-                    <div className="centerbuttons">
+                    <div className="btn-group">
                       <Link to="/">
-                        <Button className="mt-3" type="submit">
-                          Login
+                        <Button
+                          className="signup-login-btn rounded-pill"
+                          type="submit"
+                        >
+                          <h3>Login</h3>
                         </Button>
                       </Link>
-                      <Button className="mt-3 ml-2" type="submit">
-                        Register
+                      <Button
+                        className="signup-register-btn rounded-pill ml-1"
+                        type="submit"
+                      >
+                        <h3>Register</h3>
                       </Button>
                     </div>
                   </Form>
-                </Card.Body>
-              </Card>
-            </Fade>
-          </Col>
-        </Row>
-      </Container>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </Fade>
+      </div>
     );
   }
 }

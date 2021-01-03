@@ -5,7 +5,6 @@ class AddItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      render: false,
       travelers: [],
     };
   }
@@ -41,34 +40,18 @@ class AddItem extends Component {
     });
   };
 
-  // Gets Travelers on the Trip
-  getTravelersJSON = () => {
-    fetch("/trip/getTravelers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ travelerIds: this.props.travelerIds }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({ travelers: res.travelers, render: true });
-      });
-  };
-
   // Create Traveler Radio
-  createTraveler = (traveler) => {
-    const name = traveler.firstName + " " + traveler.lastName;
-    const checked = traveler.id === this.defaultValue("assignee");
+  createTraveler = (travelerId, travelerName) => {
+    const checked = travelerId === this.defaultValue("assignee");
     return (
       <Form.Check
         custom
         type="radio"
         name="traveler"
-        label={name}
-        id={`#${traveler.id}`}
-        key={traveler.id}
-        value={traveler.id}
+        label={travelerName}
+        id={`#${travelerId}`}
+        key={travelerId}
+        value={travelerId}
         defaultChecked={checked}
       />
     );
@@ -76,10 +59,10 @@ class AddItem extends Component {
 
   // Render Traveler(s) Radio
   renderTravelers = () => {
-    if (!this.state.travelers || this.state.travelers.length === 0) return;
+    if (!this.props.travelers || this.props.travelerIds.length === 0) return;
     var travelersJSX = [];
-    for (const traveler of this.state.travelers) {
-      travelersJSX.push(this.createTraveler(traveler));
+    for (const traveler in this.props.travelers) {
+      travelersJSX.push(this.createTraveler(traveler, this.props.travelers[traveler]));
     }
     return travelersJSX;
   };
@@ -104,15 +87,8 @@ class AddItem extends Component {
     }
   };
 
-  componentDidMount() {
-    this.getTravelersJSON();
-  }
-
   render() {
-    if (!this.state.render) return <div></div>;
-
     const isCheckedOff = this.defaultValue("isComplete");
-
     return (
       <Modal
         show={this.props.show}

@@ -10,9 +10,7 @@ import protectInfoImage from "../Media/protectInfoImage.svg";
 import "../Stylesheets/HomePage.css";
 
 class HomePage extends Component {
-  constructor(props) {
-    super(props);
-  }
+
 
   render() {
     return (
@@ -60,7 +58,7 @@ class HomePage extends Component {
                       alt="First slide"
                     />
                   </Col>
-                  <Col className="carousel-description p-5" md={12} lg={6}>
+                  <Col className="carousel-description" md={12} lg={6}>
                     <h1> Add a Friend</h1>
                     <p>
                       FriendTrip makes going on Trips a collaborative and fun
@@ -84,7 +82,7 @@ class HomePage extends Component {
                       alt="First slide"
                     />
                   </Col>
-                  <Col className="carousel-description p-5" md={12} lg={6}>
+                  <Col className="carousel-description" md={12} lg={6}>
                     <h1> Create a Trip</h1>
                     <p>
                       Have you ever experienced disorganization or frustration
@@ -109,7 +107,7 @@ class HomePage extends Component {
                       alt="First slide"
                     />
                   </Col>
-                  <Col className="carousel-description p-5" md={12} lg={6}>
+                  <Col className="carousel-description" md={12} lg={6}>
                     <h1> View your Trips</h1>
                     <p>
                       View current Trips by navigating to the Trips Page. Here,
@@ -133,7 +131,7 @@ class HomePage extends Component {
                       alt="First slide"
                     />
                   </Col>
-                  <Col className="carousel-description p-5" md={12} lg={6}>
+                  <Col className="carousel-description" md={12} lg={6}>
                     <h1> Account Settings</h1>
                     <p>
                       Made a typo when creating your account? Don't fret! Access
@@ -156,7 +154,7 @@ class HomePage extends Component {
                       alt="First slide"
                     />
                   </Col>
-                  <Col className="carousel-description p-5" md={12} lg={6}>
+                  <Col className="carousel-description" md={12} lg={6}>
                     <h1> Protect your Info</h1>
                     <p>
                       Although we do our best to protect our users, we need your

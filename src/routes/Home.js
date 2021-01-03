@@ -20,14 +20,23 @@ class Home extends Component {
     super(props);
     this.page = this.switchPage.bind(this);
     this.logout = this.logoutFunc.bind(this);
-    this.redirectTrip = this.redirectTrip.bind(this);
     this.state = {
-      render: "",
+      renderedContent: "",
       tripId: "",
       traveler: {},
+      showNavbar: true,
     };
+    this.toggleNavBar = this.toggleNavBar.bind(this);
   }
 
+  toggleNavBar = () => {
+    this.setState(prevState => ({
+      showNavbar: !prevState.showNavbar
+    }));
+  }
+
+  // Send a POST request to the REST API at "api/logout"
+  // Handles logout functionality
   logoutFunc = () => {
     fetch("/logout", {
       method: "POST",
@@ -43,60 +52,39 @@ class Home extends Component {
       });
   };
 
-  getTravelerJSON = () => {
-    fetch("/account/getAccount", {
-      method: "POST",
+  // Handles updating Traveler information THEN swapping pages (if applicable)
+  switchPage = (event) => {
+    fetch("/account/getAccount/" + this.getUserId(), {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: this.getUserId() }),
+      }
     })
       .then((res) => res.json())
       .then((res) => {
-        this.setState({ traveler: res });
+        this.setState({ traveler: res.account });
+        if (event) this.setState({ renderedContent: event });
       });
   };
 
-  switchPage = (event) => {
-    this.refreshTravelerJSON();
-    this.setState({ render: event });
-  };
-
+  // Handles displaying specific trip page
   selectTrip = (tripId) => {
-    this.refreshTravelerJSON();
-    this.setState({ tripId, render: "trip" });
+    this.setState({ tripId, renderedContent: "trip" });
   };
 
-  refreshTravelerJSON = () => {
-    this.getTravelerJSON();
-  };
-
+  // Handles getting Traveler id from localStorage
   getUserId = () => {
     return localStorage.getItem("id");
   };
 
-  // Updates Traveler JSON and redirects to Trips Page
-  redirectTrip = () => {
-    fetch("/account/getAccount", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: this.getUserId() }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({ traveler: res, render: "trips" });
-      });
-  };
-
+  // Render content based on state
   renderContent() {
-    switch (this.state.render) {
+    switch (this.state.renderedContent) {
       case "account":
         return (
           <Account
             traveler={this.state.traveler}
-            refreshTraveler={this.refreshTravelerJSON}
+            refreshTraveler={this.switchPage}
             user={this.getUserId()}
           ></Account>
         );
@@ -105,59 +93,57 @@ class Home extends Component {
           <Trips
             tripIds={this.state.traveler.tripIds}
             invitations={this.state.traveler.invitations}
-            refreshTraveler={this.refreshTravelerJSON}
-            callback={this.selectTrip}
+            refreshTraveler={this.switchPage}
+            selectTrip={this.selectTrip}
           ></Trips>
         );
       case "trip":
         return (
           <Trip
-            redirectTrip={this.redirectTrip}
+            switchPage={this.switchPage}
             tripId={this.state.tripId}
             traveler={this.state.traveler}
             history={this.props.history}
           />
         );
       case "friends":
-        return <Friends refreshTraveler={this.refreshTravelerJSON} />;
+        return <Friends refreshTraveler={this.switchPage} />;
       case "createTrip":
-        return (
-          <CreateTrip refreshTraveler={this.refreshTravelerJSON}></CreateTrip>
-        );
+        return <CreateTrip refreshTraveler={this.switchPage}></CreateTrip>;
       default:
         return <HomePage></HomePage>;
     }
-  }
+  };
 
+  // Get Traveler's information and store it on mount
   componentDidMount() {
-    this.getTravelerJSON();
-  }
+    this.switchPage();
+  };
 
+  // Redirect Travelers who are not logged in trying to enter the home page
   redirectOnLoggedOut = () => {
-    if (!localStorage.getItem("id")) this.props.history.push("/");
+    if (!localStorage.getItem("id")) {
+      this.props.history.push("/");
+    }
   };
 
   render() {
+    const showNavbar = this.state.showNavbar ? "d-inline-block" : "homepage-left-minimized ";
+    const resizeHomepage = this.state.showNavbar ? "" : "w-100";
     return (
       <div className="homepage-wrapper">
         {this.redirectOnLoggedOut()}
         <Fade left>
-          <div className="homepage-left">
+          <div className={`${showNavbar} homepage-left`}>
             <Navbar
-              page={this.switchPage}
-              out={this.logoutFunc}
+              switchPage={this.switchPage}
               className="position-sticky"
+              showNavbar={this.state.showNavbar}
+              toggleNavbar={this.toggleNavBar}
             ></Navbar>
-            <img
-              src={navBarImage}
-              width="100%"
-              className="d-inline-block homepage-left-image"
-              alt="navBarImage"
-              id="navBarImage"
-            />
           </div>
         </Fade>
-        <div className="homepage-right pt-5 pl-5 pr-5">
+        <div className={`${resizeHomepage} homepage-right`}>
           {this.renderContent()}
         </div>
         <div className="homepage-account mt-3 pr-3">

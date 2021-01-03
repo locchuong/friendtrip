@@ -1,42 +1,139 @@
 /* NAV BAR  */
 .navbar {
-    background-color: #166AE0;
-    border-radius: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background-color: #ffffff;
+  height: 100%;
 }
 .navbar > Button {
-    background-color: #166AE0;
-    border: 1px solid white;
-    color: white;
+  display: flex;
+  background-color: #ffffff;
+  border: 1px solid white;
+  color: rgb(0, 0, 0);
+  align-items: center;
 }
 .navbar > Button:hover {
-    background-color: black;
-    border: 1px solid black;
-    color: white;
+  background-color: #4087eb;
+  border: 1px solid #4087eb;
+  color: white;
 }
 .navbar > Button:hover > Img {
-    filter: grayscale(100%) invert(1);
+  filter: grayscale(100%) invert(1);
 }
-
 .navbar > Button > Img {
-    filter: drop-shadow(1px 1px 2px #FFFFFF) grayscale(100%) invert(1);
+  filter: drop-shadow(1px 1px 2px #ffffff) grayscale(100%);
+  width: 15%;
 }
-
-.navbar > Button:active {
-    background-color: black;
+.navbar > Button:focus > Img {
+  filter: grayscale(100%) invert(1);
 }
 .navbar > Button:focus {
-    background-color: black;
-}
-.navbar-retract {
-    display: flex;
-    align-self: flex-end;
+  background-color: #4087eb;
 }
 .navbar-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
 }
-.navbar-title {
-    font-size: 3vw;
+/* Minimized Navbar */
+.navbar-minimized > Button {
+  padding: 0.5rem;
+}
+.navbar-minimized > Button > h5 {
+  display: none;
+}
+.navbar-minimized > Button > img {
+  width: 100%;
+}
+.navbar-minimized > .navbar-header > .friendtripIcon {
+  display: inline-block;
+  width: 80%;
+}
+.navbar-minimized > .navbar-header {
+    justify-content: center;
+}
+.navbar-minimized > .navbar-header > .friendtripLogo {
+  display: none;
+}
+.navbar-minimized > Button > .toggleNavbarIcon {
+  transform: scaleX(-1);
+}
+
+/* Images */
+.friendtripLogo {
+  display: inline-block;
+  width: 80%;
+}
+.friendtripIcon {
+  display: none;
+}
+/* Media Queries */
+@media only screen and (max-width: 1200px) {
+  .friendtripLogo {
+    width: 90%;
+  }
+  .navbar > Button > img {
+    width: 20%;
+  }
+  .navbar-minimized > Button > img {
+      width: 100%;
+  }
+  .navbar > Button > h5 {
+    /* display: none; */
+  }
+}
+@media only screen and (max-width: 992px) {
+  .friendtripLogo {
+    display: none;
+  }
+  .friendtripIcon {
+    display: inline-block;
+    width: 60%;
+  }
+  .navbar-header {
+    justify-content: center;
+  }
+  .navbar > Button > img {
+    width: 100%;
+  }
+  .navbar > Button > h5 {
+    display: none;
+  }
+  .navbar > .toggleNavbar-btn {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .friendtripIcon {
+    margin-right: 0.5rem;
+    width: 70%;
+  }
+  .navbar > Button {
+    padding: 0px;
+  }
+  .navbar > Button > img {
+    width: 80%;
+  }
+  .navbar > Button > h5 {
+    display: none;
+  }
+}
+@media only screen and (max-width: 576px) {
+  .friendtripIcon {
+    width: 80%;
+  }
+  .navbar > Button {
+    padding: 0px;
+  }
+  .navbar > Button > img {
+    width: 80%;
+  }
+  .navbar > Button > h5 {
+    display: none;
+  }
 }

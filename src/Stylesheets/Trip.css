@@ -6,6 +6,7 @@
 }
 .trip-list {
     background-color: #EBEAF7;
+    border-radius: 15px;
 }
 .trip-list-header {
     background-color: #166AE0;

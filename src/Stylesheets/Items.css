@@ -1,6 +1,8 @@
 .item-list {
     background-color: #FFFFFF;
     border: 1px solid #81a6da;
+    border-radius: 15px;
+    overflow: hidden;
 }
 .item-list-header {
     display: flex;

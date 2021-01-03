@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { Button, Card } from "react-bootstrap";
-
 import EditNotes from "./modals/EditNotes";
 import notesIcon from "../../Media/notesIcon.svg";
-
 import "../../Stylesheets/Notes.css";
+
 class Notes extends Component {
   constructor(props) {
     super(props);
@@ -15,18 +14,15 @@ class Notes extends Component {
     this.openEditNotesModal = this.openEditNotesModal.bind(this);
     this.closeEditNotesModal = this.closeEditNotesModal.bind(this);
   }
-
   closeEditNotesModal = () => {
     this.setState({ showEditNotes: false });
   };
-
   openEditNotesModal = () => {
     this.setState({ showEditNotes: true });
   };
-
   render() {
     return (
-      <div>
+      <div className="notes-main h-100">
         <EditNotes
           id={this.props.id}
           notes={this.props.notes}
@@ -35,7 +31,7 @@ class Notes extends Component {
           refreshTrip={this.props.refreshTrip}
         />
 
-        <Card className="notes-list">
+        <Card className="notes-list h-100">
           <Card.Header className="notes-list-header p-1 pl-3">
           <img
             src={notesIcon}
@@ -46,7 +42,7 @@ class Notes extends Component {
             id="notesIcon"
           />
             <strong>Notes</strong>
-            <Button className="ml-auto d-inline-block" onClick={this.openEditNotesModal} variant="success">Edit Notes</Button>
+            <Button className="test ml-auto d-inline-block" onClick={this.openEditNotesModal} variant="success">📋 Edit</Button>
           </Card.Header>
           <Card.Body className="notes-list-body">
             <div style={{whiteSpace: "pre-line"}}>{this.props.notes}</div>

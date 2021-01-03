@@ -1,18 +1,3 @@
-.signup-content {
-    margin-top: -30vh;
-    margin-left: 5vw;
-    margin-right: 5vw;
-  }
-
-  .signup-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url("../Media/signupImage.svg");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: right top;
-  }
   .signup-input-border {
     border: 1px solid #4385f4 !important;
     background-color: #4385f4 !important;
@@ -39,23 +24,203 @@
     box-shadow: inset 0 -1px 0 #ddd;
     background-color: #ceddfa;
   }
-  .signup-header {
-    background-color: #1569e0;
-    color: white;
+/* Login Divs */
+.signup-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f4f5;
+  margin: 0px;
+  padding: 0px;
+  background-image: url("../Media/loginBlob.svg");
+  background-repeat: no-repeat;
+  background-size: 65vw;
+  background-position: 50% 50%;
+  overflow: hidden;
+}
+
+.signup-content {
+  width: 60vw;
+  height: 60vh;
+  background-color: #f8fafb;
+  border-radius: 15px;
+  padding: 2rem;
+  margin: 0px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 5px 3px rgb(141, 141, 141);
+}
+.signup-content-left {
+  padding: 0px;
+  margin: 0px;
+}
+.signup-content-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 5vw !important;
+  margin: 0px;
+}
+.signup-logo-left {
+  display: inline-block;
+  position: absolute;
+  width: 50%;
+  top: 0;
+  left: 0;
+}
+.signup-image-left {
+  width:100%;
+  max-height: 75%;
+  position: absolute;
+  bottom: 10%;
+  left: 0px;
+}
+/* Buttons */
+.signup-login-btn {
+  background-color: white;
+  color: grey;
+  border: 1px solid grey;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  float: left;
+}
+.signup-register-btn {
+  background-color: #76b6f1;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  float: left;
+}
+.signup-logo-right {
+  display: none;
+}
+
+/* Typography */
+h1 {
+  font-size: calc(1vw + 0.5rem);
+}
+h3 {
+  font-weight: 300;
+}
+h5 {
+  font-size: calc(1vw + 0.1rem);
+  font-weight: 300;
+}
+@media only screen and (max-width: 1200px) {
+  .signup-root {
+    background-size: 75vw;
   }
-  .signup-body {
-    background-color: #ebeaf7;
+  .signup-content {
+    width: 60vw;
+    height: 60vh;
   }
-  .centerbuttons {
-    text-align: center;
+  .signup-content-right {
+    padding: 0px 5vw !important;
   }
-  .signup-left {
-    display: flex;
-    flex-direction: column;
+  h1 {
+    font-size: calc(1vw + 0.5rem);
+  }
+  h5 {
+    font-size: calc(1vw + 0.3rem);
+  }
+}
+@media only screen and (max-width: 992px) {
+  .signup-root {
+    background-size: 95vw;
+  }
+  .signup-content {
+    width: 80vw;
+    height: 50vh;
+  }
+  .signup-logo-right {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 5vw;
+    margin-bottom: 0.5rem;
+    width: 20%;
+  }
+  .signup-content-right {
+    padding: 0px 5vw !important;
+  }
+  h1 {
+    font-size: calc(1vw + 0.5rem);
+  }
+  h5 {
+    font-size: calc(1vw + 0.3rem);
+    font-weight: 400;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .signup-root {
+    background-size: 95vw;
+  }
+  .signup-content {
+    width: 80vw;
+    height: 50vh;
+  }
+  .signup-logo-right {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 5vw;
+    margin-bottom: 0.5rem;
+    width: 20%;
+  }
+  .signup-content-right {
+    padding: 0px 5vw !important;
+  }
+  h1 {
+    font-size: calc(1vw + 0.5rem);
+  }
+  h5 {
+    font-size: calc(1vw + 0.3rem);
+    font-weight: 500;
+  }
+}
+@media only screen and (max-width: 576px) {
+  .signup-root {
+    background-image: none;
+  }
+  .signup-content {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0px;
+    padding: 0px
+  }
+  .signup-content-right {
+    padding: 0px 10vw !important;
+  }
+  .signup-image-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.3;
     width: 100%;
     height: 100%;
-    background-color: #1569e0;
-    text-align: center;
-    color: white;
-    justify-content: center;
+    background-image: url("../Media/signupImage.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: left bottom;
+    /* pointer-events: none; */
   }
+  .signup-logo-right {
+    display: inline-block;
+    position: absolute;
+    width: 60%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    top: 10vh;
+  }
+  h1 {
+    font-size: calc(1vw + 1rem);
+  }
+  h5 {
+    font-size: calc(1vw + 0.4rem);
+    font-weight: 500;
+  }
+}

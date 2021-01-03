@@ -9,10 +9,8 @@ class Expenses extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      render: false,
       showAddExpense: false,
       expenses: [],
-      travelers: {},
       expenseToEdit: null,
     };
 
@@ -39,38 +37,21 @@ class Expenses extends Component {
   };
 
   getExpenses = (expenseIds) => {
-    const data = {
-      expenseIds,
-    };
-    fetch("/expense/getExpenses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.getTravelersJSON(res.expenses);
-      });
-  };
-
-  getTravelersJSON = (expenses) => {
-    fetch("/trip/getTravelers", {
-        method: "POST",
+    if (expenseIds) {
+      fetch("/expense/getExpenses/" + expenseIds, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ travelerIds: this.props.travelerIds }),
-    }).then((res) => res.json()).then((res) => {
-      var travelers = {}
-      for (const traveler of res.travelers) {
-        travelers[traveler.id] = traveler.firstName + " " + traveler.lastName;
-      }
-      this.setState({ travelers, expenses, render: true });
-    });
-  }
-
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          this.setState({expenses: res.expenses});
+        });
+    } else {
+      this.setState({expenses: [] });
+    }
+  };
 
   createExpenseListGroupItem = (expense) => {
     return (
@@ -88,16 +69,19 @@ class Expenses extends Component {
       },
       body: JSON.stringify({ id: expenseId, tripId }),
     }).then((res) => {
-      this.props.refreshTrip();
-      this.getExpenses();
+      this.props.refreshTrip(this.refreshExpenses);
     });
   };
 
   createExpenseTabPane = (expense) => {
     let travelerList = [];
-    if(expense.travelerIds) {
+    if (expense.travelerIds) {
       for (let i = 0; i < Object.keys(expense.travelerIds).length; i++) {
-        travelerList.push(<li key={`#${expense.travelerIds[i]}`} >{this.state.travelers[expense.travelerIds[i]]} </li>);
+        travelerList.push(
+          <li key={`#${expense.travelerIds[i]}`}>
+            {this.props.travelers[expense.travelerIds[i]]}{" "}
+          </li>
+        );
       }
     }
     return (
@@ -106,7 +90,7 @@ class Expenses extends Component {
         <h6>Remaining Balance: {expense.cost}</h6>
         <h6>Travelers: </h6>
         {travelerList}
-        <br/>
+        <br />
         <h6>Description:</h6>
         <p>{expense.description}</p>
         <hr></hr>
@@ -167,22 +151,18 @@ class Expenses extends Component {
     this.getExpenses(this.props.expenseIds);
   };
 
-  componentWillReceiveProps(nextProps) {
-    this.getExpenses(nextProps.expenseIds);
-  }
-
   componentDidMount() {
     this.getExpenses(this.props.expenseIds);
   }
 
   render() {
-    if (!this.state.render) return <div></div>;
     return (
       <div>
         <AddExpense
           kind="Add"
           travelerId={this.props.travelerId}
           travelerIds={this.props.travelerIds}
+          travelers={this.props.travelers}
           tripId={this.props.tripId}
           refreshTrip={this.props.refreshTrip}
           refreshExpense={this.refreshExpenses}
@@ -193,6 +173,7 @@ class Expenses extends Component {
           kind="Edit"
           travelerId={this.props.travelerId}
           travelerIds={this.props.travelerIds}
+          travelers={this.props.travelers}
           tripId={this.props.tripId}
           refreshTrip={this.props.refreshTrip}
           refreshExpense={this.refreshExpenses}
@@ -202,21 +183,21 @@ class Expenses extends Component {
         />
         <Card className="expenses-list mb-3">
           <Card.Header className="expenses-list-header p-1 pl-3">
-          <img
-            src={expenseIcon}
-            width="25"
-            height="25"
-            className="expenses-list-icon d-inline-block align-top mr-2 "
-            alt="expenseIcon"
-            id="expenseIcon"
-          />
+            <img
+              src={expenseIcon}
+              width="25"
+              height="25"
+              className="expenses-list-icon d-inline-block align-top mr-2 "
+              alt="expenseIcon"
+              id="expenseIcon"
+            />
             <strong>Expenses</strong>
             <Button
               className="ml-auto d-inline-block"
               variant="success"
               onClick={this.openAddExpenseModal}
             >
-              Add Expense
+              📋 Add
             </Button>
           </Card.Header>
           <Card.Body className="expenses-list-body">

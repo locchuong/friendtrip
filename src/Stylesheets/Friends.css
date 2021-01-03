@@ -1,25 +1,79 @@
-.friends-page-header {
-    display:flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+/* Friend Request */
+.friend-request-list {
+    background-color: #EBEAF7;
+    border-radius: 15px;
 }
-.friend-list-header {
-    display: flex;
-    flex-direction: row;
+.friend-request-list-header {
     background-color: #166AE0;
     color: white;
 }
+.friend-request-list-body {
+    position: relative;
+    z-index: 1;
+}
+
+.friends-page-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+.friend-list-header {
+  display: flex;
+  flex-direction: row;
+  background-color: #166ae0;
+  align-items: center;
+  color: white;
+}
 .add-friend-form {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-left: auto;
 }
 
 .friend-list-body {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    background-color: #EBEAF7;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  background-color: #ebeaf7;
+}
+
+@media only screen and (max-width: 1200px) {
+}
+@media only screen and (max-width: 992px) {
+}
+@media only screen and (max-width: 768px) {
+    .add-friend-form > h5 {
+        display: none;
+    }
+}
+@media only screen and (max-width: 500px) {
+    .friend-request-list-body > div > div > div{
+        padding: 0px;
+    }
+    .add-friend-form > .form-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+    .add-friend-form > .form-row > .form-group {
+        width: 60%;
+    }
+    .add-friend-form > .form-row > .form-group > .form-control{
+        height: calc(1.5rem + .75rem + 2px);
+        font-size: 0.75rem;
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 430px) {
+    .add-friend-form > .form-row > .form-group {
+        width: 60%;
+    }
+    .add-friend-form > .form-row > .form-group > .form-control{
+        height: calc(1.5rem + .75rem + 2px);
+        font-size: 0.5rem;
+        width: 100%;
+    }
 }

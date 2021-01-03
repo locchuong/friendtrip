@@ -11,8 +11,24 @@
     background-color: #166AE0;
     color: white;
 }
+.trips-list-body > div > div > div {
+    padding: 0px;
+}
+.trips-list-body > div > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 .trips-invite {
     background-color: white;
     align-items: center;
     border: 1px solid rgba(0,0,0,.125);
+}
+@media only screen and (max-width: 600px) {
+    .trips-list-body > div {
+        padding: 0px;
+    }
+    .trips-list-body > div> button > div > div{
+        padding: 0px;
+    }
 }

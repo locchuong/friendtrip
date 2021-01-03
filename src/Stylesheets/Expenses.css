@@ -1,6 +1,8 @@
 .expenses-list {
     background-color: #EBEAF7;
     border: 1px solid #81a6da;
+    border-radius: 15px;
+    overflow: hidden;
 }
 .expenses-list-header {
     display: flex;

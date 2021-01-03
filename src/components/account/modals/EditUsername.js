@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal, Form, Col } from "react-bootstrap";
 
 class EditUsername extends Component {
-  constructor(props) {
-    super(props);
-  }
+
   updateUsername = event => {
     event.preventDefault();
     const {username} = event.target.elements;
@@ -14,7 +12,7 @@ class EditUsername extends Component {
     }
     
     fetch("/account/editAccount", {
-        method: "POST",
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
         },

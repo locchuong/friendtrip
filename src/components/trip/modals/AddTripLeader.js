@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Button, Modal, ListGroup, Alert } from "react-bootstrap";
+import { Form, Button, Modal} from "react-bootstrap";
 
 class AddTripLeader extends Component {
     constructor(props) {
@@ -38,12 +38,11 @@ class AddTripLeader extends Component {
     }
 
     getTravelerJSON = () => {
-        fetch("/trip/getTravelers", {
-            method: "POST",
+        fetch("/trip/getTravelers/" + this.props.travelerIds, {
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ travelerIds: this.props.travelerIds }),
         }).then((res) => res.json()).then((res) => {
             this.setState({ travelers: res.travelers, render: true })
         });

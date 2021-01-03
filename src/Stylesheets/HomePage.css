@@ -22,6 +22,7 @@
 }
 .carousel-description {
     text-align: center;
+    padding: 3rem;
 }
 .carousel-description > p {
     font-size: calc(0.25vw + 0.75rem);
@@ -34,11 +35,7 @@
     color: white;
     border-radius: 30px;
 }
-.home-page-greeting-title {
-    font-size: 2vw;
-}
 .carousel-title {
-    font-size: 2vw;
     padding-bottom: 1rem;
 }
 .home-page-greeting-description {
@@ -48,4 +45,10 @@
 .carousel-inner {
     padding-left: 8vw;
     padding-right: 8vw;
+}
+@media only screen and (max-width:600px) {
+    .carousel-description {
+        padding: 1rem;
+        padding-bottom: 2rem;
+    }
 }

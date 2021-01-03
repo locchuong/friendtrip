@@ -10,10 +10,11 @@ class Trips extends Component {
     this.state = {
       trips: [],
       invitedTrips: [],
-      owners: {}
+      owners: {},
     };
   }
 
+  // Handles getting current Trips' owner ids
   getOwnerIds = (trips) => {
     var owners = [];
     for (const trip of trips) {
@@ -22,50 +23,64 @@ class Trips extends Component {
     return owners;
   };
 
-  getTripsJSON = (tripIds, invitations) => {
-    fetch("/trip/getTrips", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ tripIds }),
-    }).then((res) => res.json()).then((res) => {
-      this.getInvitedTripsJSON(res.trips, invitations)
-    });
+  // Handles getting current Trips, delegates getting owner names to GetOwnerNames()
+  getTripsJSON = (tripIds) => {
+    if (tripIds) {
+      fetch("/trip/getTrips/" + tripIds, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          this.getOwnerNames(res.trips);
+        });
+    }
   };
 
-  getInvitedTripsJSON = (trips, tripIds) => {
-    fetch("/trip/getTrips", {
-      method: "POST",
+  // Handles getting current Trips' owner name
+  getOwnerNames = (trips) => {
+    fetch("/trip/getTravelers/" + this.getOwnerIds(trips), {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ tripIds }),
-    }).then((res) => res.json()).then((res) => {
-      this.getOwnerNames(trips, res.trips);
-    });
-  }
-
-  getOwnerNames = (trips, invitedTrips) => {
-    fetch("/trip/getTravelers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ travelerIds: this.getOwnerIds(trips) }),
-    }).then((res) => res.json()).then((res) => {
-      const owners = {};
-      for (const traveler of res.travelers) {
-        owners[traveler.id] = traveler.firstName + " " + traveler.lastName;
-      }
-      this.setState({ trips, invitedTrips, owners });
-    });
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        let owners = {};
+        for (let traveler of res.travelers) {
+          owners[traveler.id] = traveler.firstName + " " + traveler.lastName;
+        }
+        this.setState({ trips, owners });
+      });
   };
 
+  // Handles getting Trip invitations of the Traveler
+  getInvitedTripsJSON = (tripIds) => {
+    if (tripIds) {
+      fetch("/trip/getTrips/" + tripIds, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          this.setState({ invitedTrips: res.trips });
+        });
+    }
+    else {
+      this.setState({ invitedTrips: []});
+    }
+  };
+
+  // Handles accept/reject trip invite
   handleInvitation = (tripId, method) => {
-    const data = { travelerId: this.getUserId(), tripId }
+    const data = { travelerId: this.getUserId(), tripId };
     fetch("/trip/" + method, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -73,7 +88,7 @@ class Trips extends Component {
     }).then((res) => {
       this.props.refreshTraveler();
     });
-  }
+  };
 
   getUserId = () => {
     return localStorage.getItem("id");
@@ -82,42 +97,24 @@ class Trips extends Component {
   createTrip = (trip) => {
     const ownerName = this.state.owners[trip.travelerId];
     return (
-        <ListGroup.Item
-          className="d-inline-block w-80"
-          key={trip.id}
-          action
-          onClick={() => this.props.callback(trip.id)}
+      <ListGroup.Item
+        className="d-inline-block w-80 pb-1 pt-1"
+        key={trip.id}
+        action
+        onClick={() => this.props.selectTrip(trip.id)}
+      >
+        <Row
+          style={{ color: "black" }}
+          className="align-items-center text-center"
         >
-          <Row
-            style={{ color: "black" }}
-            className="align-items-center text-center"
-          >
-            <Col xs={2}>{trip.name}</Col>
-            <Col xs={2}>{ownerName}</Col>
-            <Col xs={2}>{Object.keys(trip.travelerIds).length}</Col>
-            <Col>{trip.description}</Col>
-          </Row>
-        </ListGroup.Item>
+          <Col xs={2}><p>{trip.name}</p></Col>
+          <Col xs={2}><p>{ownerName}</p></Col>
+          <Col xs={2}><p>{Object.keys(trip.travelerIds).length}</p></Col>
+          <Col><p>{trip.description}</p></Col>
+        </Row>
+      </ListGroup.Item>
     );
-  }
-
-  createInvitation = (invite) => {
-    if (!invite) return (<div></div>);
-    return (
-      <Row className="trips-invite m-0 text-center p-1" key={invite.id} id={"row" + invite.id}>
-      <Col xs={2}>{invite.name}</Col>
-      <Col xs={5}>{invite.description}</Col>
-      <Col>
-        <Button onClick={() => {this.handleInvitation(invite.id, "acceptInvite")}} variant="success">
-          Accept
-        </Button>{" "}
-        <Button onClick={() => {this.handleInvitation(invite.id, "rejectInvite")}} className="ml-3" variant="danger">
-          Decline
-        </Button>
-      </Col>
-    </Row>
-    )
-  }
+  };
 
   renderTrips() {
     if (!this.state.trips) return;
@@ -128,9 +125,42 @@ class Trips extends Component {
     return tripsJSX;
   }
 
+  createInvitation = (invite) => {
+    if (!invite) return <div></div>;
+    return (
+      <Row
+        className="trips-invite m-0 text-center p-1"
+        key={invite.id}
+        id={"row" + invite.id}
+      >
+        <Col xs={2}>{invite.name}</Col>
+        <Col xs={5}>{invite.description}</Col>
+        <Col>
+          <Button
+            onClick={() => {
+              this.handleInvitation(invite.id, "acceptInvite");
+            }}
+            variant="success"
+          >
+            Accept
+          </Button>{" "}
+          <Button
+            onClick={() => {
+              this.handleInvitation(invite.id, "rejectInvite");
+            }}
+            className="ml-3"
+            variant="danger"
+          >
+            Decline
+          </Button>
+        </Col>
+      </Row>
+    );
+  };
+
   renderInvitations() {
-    if (!this.state.invitedTrips) return;
     var invitesJSX = [];
+    if (!this.state.invitedTrips) return invitesJSX;
     for (const invite of this.state.invitedTrips) {
       invitesJSX.push(this.createInvitation(invite));
     }
@@ -138,11 +168,13 @@ class Trips extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.getTripsJSON(nextProps.tripIds, nextProps.invitations);
+    this.getTripsJSON(nextProps.tripIds);
+    this.getInvitedTripsJSON(nextProps.invitations);
   }
 
   componentDidMount() {
-    this.getTripsJSON(this.props.tripIds, this.props.invitations);
+    this.getTripsJSON(this.props.tripIds);
+    this.getInvitedTripsJSON(this.props.invitations);
   }
 
   render() {
@@ -166,10 +198,10 @@ class Trips extends Component {
 
         {/* TRIP INVITATIONS */}
         <Card className="trips-list" style={{ width: "100%" }}>
-          <Card.Header className="trips-list-header">
-            <h2> Trip Invitations </h2>
+          <Card.Header className="trips-list-header pt-1 pb-1">
+            <h4> Trip Invitations </h4>
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="trips-list-body">
             <Container fluid>
               <Row className="m-0 text-center">
                 <Col xs={2}>
@@ -187,10 +219,10 @@ class Trips extends Component {
 
         {/* VIEW MY TRIPS */}
         <Card className="trips-list mt-3" style={{ width: "100%" }}>
-          <Card.Header className="trips-list-header">
-            <h2> My Trips </h2>
+          <Card.Header className="trips-list-header pb-1 pt-1">
+            <h4> My Trips </h4>
           </Card.Header>
-          <Card.Body>
+          <Card.Body className="trips-list-body">
             <Container fluid>
               <Row className="m-0 text-center">
                 <Col xs={2}>
@@ -212,8 +244,7 @@ class Trips extends Component {
         </Card>
         <img
           src={tripPageImage}
-          width="40%"
-          className="d-inline-block page-background-image"
+          className="page-background-image"
           alt="tripPageImage"
           id="tripPageImage"
         />

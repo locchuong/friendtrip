@@ -2,17 +2,13 @@ import React, { Component } from "react";
 import { Button, Modal, Form, Col } from "react-bootstrap";
 
 class AddExpense extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      render: false,
-      travelers: [],
-    };
-  }
-
+  
+  // Handles add/edit Expense api call
   addExpense = (event) => {
     event.preventDefault();
+    // Grab values from user inputs (in modal box)
     const { name, description, cost, traveler } = event.target.elements;
+    // Determine which travelers are assigned the expense
     let assignedTravelers = [];
     if (this.props.travelerIds.length === 1) {
       if (traveler.checked) assignedTravelers.push(traveler.value);
@@ -33,7 +29,6 @@ class AddExpense extends Component {
     const addExpenseAPI = "/expense/addExpense";
     const editExpenseAPI = "/expense/editExpense";
     const fetchAPI = this.props.kind === "Add" ? addExpenseAPI : editExpenseAPI;
-
     fetch(fetchAPI, {
       method: "POST",
       headers: {
@@ -44,22 +39,7 @@ class AddExpense extends Component {
       this.props.refreshTrip(this.props.refreshExpense);
       this.props.handleClose();
     });
-  };
-
-  // Gets Travelers on the Trip
-  getTravelersJSON = () => {
-    fetch("/trip/getTravelers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ travelerIds: this.props.travelerIds }),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        this.setState({ travelers: res.travelers, render: true });
-      });
-  };
+  }
 
   travelerAssigned = (travelerId, ids) => {
     ids = Object.values(ids);
@@ -70,12 +50,11 @@ class AddExpense extends Component {
   };
 
   // Create Traveler Radio
-  createTraveler = (traveler) => {
-    const name = traveler.firstName + " " + traveler.lastName;
+  createTraveler = (travelerId, travelerName) => {
     var checked = false;
     if (this.props.expense && this.props.expense.travelerIds) {
       checked = this.travelerAssigned(
-        traveler.id,
+        travelerId,
         this.props.expense.travelerIds
       );
     }
@@ -84,10 +63,10 @@ class AddExpense extends Component {
         custom
         type="checkbox"
         name="traveler"
-        label={name}
-        id={`#${traveler.id}`}
-        key={traveler.id}
-        value={traveler.id}
+        label={travelerName}
+        id={`#${travelerId}`}
+        key={travelerId}
+        value={travelerId}
         defaultChecked={checked}
       />
     );
@@ -95,11 +74,14 @@ class AddExpense extends Component {
 
   // Render Traveler(s) Radio
   renderTravelers = () => {
-    if (!this.state.travelers || this.state.travelers.length === 0) return;
+    if (!this.props.travelers || this.props.travelerIds.length === 0) return;
     var travelersJSX = [];
-    for (const traveler of this.state.travelers) {
-      travelersJSX.push(this.createTraveler(traveler));
+    for (const traveler in this.props.travelers) {
+      travelersJSX.push(
+        this.createTraveler(traveler, this.props.travelers[traveler])
+      );
     }
+
     return travelersJSX;
   };
 
@@ -108,11 +90,7 @@ class AddExpense extends Component {
     else return this.props.expense[param];
   };
 
-  componentDidMount() {
-    this.getTravelersJSON();
-  }
   render() {
-    if (!this.state.render) return <div></div>;
     return (
       <Modal
         show={this.props.show}
@@ -172,7 +150,13 @@ class AddExpense extends Component {
             <Button className="m-0" variant="success" type="submit">
               Save
             </Button>
-            <Button className="m-0 ml-1" variant="warning" onClick={this.props.handleClose}>Close</Button>
+            <Button
+              className="m-0 ml-1"
+              variant="warning"
+              onClick={this.props.handleClose}
+            >
+              Close
+            </Button>
           </Modal.Footer>
         </Form>
       </Modal>

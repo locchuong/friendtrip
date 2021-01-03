@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Form, Button, Col, Card, Alert } from "react-bootstrap";
 import createTripImage from "../../Media/createTripImage.svg";
-import { Link } from "react-router-dom";
 import createTripIcon from "../../Media/createTripIcon.svg";
 import "../../Stylesheets/CreateTrip.css";
 
@@ -32,7 +31,7 @@ class CreateTrip extends Component {
     name.value = "";
     description.value = "";
 
-    fetch("/createTrip", {
+    fetch("trip/createTrip", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -98,8 +97,8 @@ class CreateTrip extends Component {
         <hr></hr>
 
         <Card border="secondary" style={{ width: "100%" }}>
-          <Card.Header className="createTrip-form-header">
-            <h2> Create Trip Form </h2>
+          <Card.Header className="createTrip-form-header pb-1 pt-1">
+            <h4> Create Trip Form </h4>
           </Card.Header>
           <Card.Body className="createTrip-form-body">
             <Form onSubmit={this.createTrip} onReset={this.resetInputs}>
@@ -151,8 +150,7 @@ class CreateTrip extends Component {
         </Card>
         <img
           src={createTripImage}
-          width="40%"
-          className="d-inline-block page-background-image mr-5"
+          className="page-background-image mr-5"
           alt="navBarImage"
           id="navBarImage"
         />

@@ -1,6 +1,11 @@
+.notes-main {
+    border-radius: 50px;
+}
 .notes-list {
     background-color: #EBEAF7;
     border: 1px solid #81a6da;
+    border-radius: 15px;
+    overflow: hidden;
 }
 .notes-list-header {
     display: flex;

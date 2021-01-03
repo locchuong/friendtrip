@@ -17,7 +17,7 @@ class AddTraveler extends Component {
         const data = { id: travelerId, tripId: this.props.id }
 
         fetch("/trip/sendInvite", {
-            method: "POST",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
@@ -33,15 +33,16 @@ class AddTraveler extends Component {
     }
 
     getFriendsJSON = (friendIds) => {
-        fetch("/trip/getTravelers", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ travelerIds: friendIds }),
-        }).then((res) => res.json()).then((res) => {
-            this.setState({ friends: res.travelers, render: true });
-        });
+        if(friendIds.length) {
+            fetch("/trip/getTravelers/" + friendIds, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+            }).then((res) => res.json()).then((res) => {
+                this.setState({ friends: res.travelers, render: true });
+            });
+        }
     }
 
     createFriend = (friend) => {

@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import { Button, Modal, Form, Col } from "react-bootstrap";
 
 class AddDestination extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   addDestination = (event) => {
     event.preventDefault();

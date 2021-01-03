@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
 
 class ConfirmDelete extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   deleteTrip = (event) => {
       event.preventDefault();
@@ -22,7 +19,7 @@ class ConfirmDelete extends Component {
           },
           body: JSON.stringify(data),
       }).then((res) => {
-          this.props.redirectTrip();
+          this.props.switchPage("trips");
       });
   };
 

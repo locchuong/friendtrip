@@ -35,11 +35,11 @@ class Items extends Component {
 
   closeEditItemModal = () => {
     this.setState({ showEditItem: false, itemToEdit: null });
-  }
+  };
 
   openEditItemModal = (item) => {
     this.setState({ showEditItem: true, itemToEdit: item });
-  }
+  };
 
   getItemsListJSON = (itemIds) => {
     const data = {
@@ -53,26 +53,29 @@ class Items extends Component {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    }).then((res) => res.json()).then((res) => {
-      this.getTravelersJSON(res.groupItems, res.personalItems);
-    });
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        this.setState({groupItems: res.groupItems, personalItems: res.personalItems});
+      });
   };
 
-  getTravelersJSON = (groupItems, personalItems) => {
-    fetch("/trip/getTravelers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ travelerIds: this.props.travelerIds }),
-    }).then((res) => res.json()).then((res) => {
-      var travelers = {}
-      for (const traveler of res.travelers) {
-        travelers[traveler.id] = traveler;
-      }
-      this.setState({ travelers, groupItems, personalItems });
-    });
-  }
+  // getTravelersJSON = (groupItems, personalItems) => {
+  //   fetch("/trip/getTravelers/" + this.props.travelerIds, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       var travelers = {};
+  //       for (const traveler of res.travelers) {
+  //         travelers[traveler.id] = traveler;
+  //       }
+  //       this.setState({ travelers, groupItems, personalItems });
+  //     });
+  // };
 
   deleteItem = (itemId, tripId) => {
     fetch("/item/deleteItem", {
@@ -85,19 +88,18 @@ class Items extends Component {
       this.props.refreshTrip();
       this.getItemsListJSON();
     });
-  }
+  };
 
   createItemPane = (item) => {
     let assignee;
-    let name ;
-    if(item.assignee) {
-      assignee = this.state.travelers[item.assignee];
+    let name;
+    if (item.assignee) {
+      assignee = this.props.travelers[item.assignee];
       name = assignee.firstName + " " + assignee.lastName;
-    }
-    else {
+    } else {
       name = "";
     }
-    return(
+    return (
       <Tab.Pane key={item.id} eventKey={`#${item.id}`}>
         <h5>Item Name: {item.name}</h5>
         <h6>Assigned To: {name}</h6>
@@ -105,20 +107,32 @@ class Items extends Component {
         <h6>Description:</h6>
         {item.description}
         <hr></hr>
-        <Button className="float-right ml-1" onClick={() => {this.deleteItem(item.id, this.props.tripId)}} variant="danger">
+        <Button
+          className="float-right ml-1"
+          onClick={() => {
+            this.deleteItem(item.id, this.props.tripId);
+          }}
+          variant="danger"
+        >
           Delete
         </Button>
-        <Button className="float-right" onClick={() => {this.openEditItemModal(item)}}>Edit</Button>
+        <Button
+          className="float-right"
+          onClick={() => {
+            this.openEditItemModal(item);
+          }}
+        >
+          Edit
+        </Button>
       </Tab.Pane>
     );
-  }
+  };
 
   renderItemsTabPane = () => {
     let itemsToRender = [];
-    if(this.props.category === "Group")  {
+    if (this.props.category === "Group") {
       itemsToRender = this.state.groupItems;
-    }
-    else {
+    } else {
       itemsToRender = this.state.personalItems;
     }
     if (!itemsToRender || itemsToRender.length === 0) return;
@@ -130,20 +144,20 @@ class Items extends Component {
   };
 
   createItemListGroupItem = (item) => {
-    let completion = item.isComplete ? "✅" : "❌"
+    let completion = item.isComplete ? "✅" : "❌";
     return (
       <ListGroup.Item key={item.id} action href={`#${item.id}`}>
-        {item.name}<span style={{ float: "right" }}>{completion}</span>
+        {item.name}
+        <span style={{ float: "right" }}>{completion}</span>
       </ListGroup.Item>
     );
   };
 
   renderItemsListGroupItem = () => {
-    let itemsToRender = []
-    if(this.props.category === "Group")  {
+    let itemsToRender = [];
+    if (this.props.category === "Group") {
       itemsToRender = this.state.groupItems;
-    }
-    else {
+    } else {
       itemsToRender = this.state.personalItems;
     }
     if (!itemsToRender || itemsToRender.length === 0) return;
@@ -155,21 +169,21 @@ class Items extends Component {
   };
 
   renderItems = () => {
-      return (
-        <Row>
-          <Col sm={5}>
-            <ListGroup>{this.renderItemsListGroupItem()}</ListGroup>
-          </Col>
-          <Col>
-            <Tab.Content>{this.renderItemsTabPane()}</Tab.Content>
-          </Col>
-        </Row>
-      );
+    return (
+      <Row>
+        <Col sm={5}>
+          <ListGroup>{this.renderItemsListGroupItem()}</ListGroup>
+        </Col>
+        <Col>
+          <Tab.Content>{this.renderItemsTabPane()}</Tab.Content>
+        </Col>
+      </Row>
+    );
   };
 
   refreshItems = () => {
     this.getItemsListJSON(this.props.itemIds);
-  } 
+  };
 
   componentWillReceiveProps(nextProps) {
     this.getItemsListJSON(nextProps.itemIds);
@@ -187,17 +201,19 @@ class Items extends Component {
           category={this.props.category}
           travelerId={this.props.travelerId}
           travelerIds={this.props.travelerIds}
+          travelers={this.props.travelers}
           tripId={this.props.tripId}
           show={this.state.showAddItem}
           refreshTrip={this.props.refreshTrip}
           handleClose={this.closeAddItemModal}
         />
 
-      <AddItem
+        <AddItem
           kind="Edit"
           category={this.props.category}
           travelerId={this.props.travelerId}
           travelerIds={this.props.travelerIds}
+          travelers={this.props.travelers}
           tripId={this.props.tripId}
           show={this.state.showEditItem}
           refreshTrip={this.props.refreshTrip}
@@ -208,21 +224,21 @@ class Items extends Component {
 
         <Card className="item-list mb-3">
           <Card.Header className="item-list-header p-1 pl-3">
-          <img
-            src={itemIcon}
-            width="25"
-            height="25"
-            className="item-list-icon d-inline-block align-top mr-2 "
-            alt="itemIcon"
-            id="itemIcon"
-          />
+            <img
+              src={itemIcon}
+              width="25"
+              height="25"
+              className="item-list-icon d-inline-block align-top mr-2 "
+              alt="itemIcon"
+              id="itemIcon"
+            />
             <strong>{this.props.category} List</strong>
             <Button
               className="ml-auto d-inline-block"
               variant="success"
               onClick={this.openAddItemModal}
             >
-              Add {this.props.category} Item
+              📋 Add
             </Button>
           </Card.Header>
           <Card.Body className="item-list-body">

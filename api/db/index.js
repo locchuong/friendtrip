@@ -11,7 +11,10 @@ var firebaseConfig = {
     appId: process.env.APP_ID
 };
 
+// Initialize firebase App
 const db = firebase.default.initializeApp(firebaseConfig);
+// const googleProvider = new firebase.auth.GoogleAuthProvider();
+
 
 const travelerRef = db.database().ref("traveler");
 const tripRef = db.database().ref("trip");

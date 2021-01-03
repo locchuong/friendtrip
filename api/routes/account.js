@@ -3,16 +3,15 @@ const { getTraveler, updateTraveler, getTravelerList } = require('../db/models/t
 var router = express.Router();
 
 
-router.post('/getAccount', function(req, res, next) {
-    handleGetAccount = (account) => {
-        res.json(account);
+router.get('/getAccount/:id', function(req, res, next) {
+    let handleGetAccount = (account) => {
+        res.json({account});
     }
-
-    getTraveler(req.body.id, handleGetAccount);
+    getTraveler(req.params.id, handleGetAccount);
 });
 
-router.post('/editAccount', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+router.put('/editAccount', function(req, res, next) {
+    let handleGetTraveler = (traveler) => {
         if(traveler) {
             if(req.body.firstName) traveler.firstName = req.body.firstName;
             if(req.body.lastName) traveler.lastName = req.body.lastName;
@@ -20,39 +19,39 @@ router.post('/editAccount', function(req, res, next) {
             updateTraveler(traveler, handleUpdateTraveler);
         }
     }
-    handleUpdateTraveler = (error) => {
+    let handleUpdateTraveler = (error) => {
         if (error) res.sendStatus(401);
         else res.sendStatus(200);
     }
     getTraveler(req.body.travelerId, handleGetTraveler);
 });
 
-router.post('/getFriends', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+router.get('/getFriends/:id', function(req, res, next) {
+    let handleGetTraveler = (traveler) => {
         getTravelerList(traveler.friendIds, handleGetFriends);
     }
 
-    handleGetFriends = (friends) => {
+    let handleGetFriends = (friends) => {
         res.json({ status: 200, friends });
     }
 
-    getTraveler(req.body.id, handleGetTraveler);
+    getTraveler(req.params.id, handleGetTraveler);
 });
 
-router.post('/getFriendInvites', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+router.get('/getFriendInvites/:id', function(req, res, next) {
+    let handleGetTraveler = (traveler) => {
         getTravelerList(traveler.friendInvitations, handleGetFriendInvites);
     }
 
-    handleGetFriendInvites = (invitations) => {
+    let handleGetFriendInvites = (invitations) => {
         res.json({ status: 200, invitations });
     }
 
-    getTraveler(req.body.id, handleGetTraveler);
+    getTraveler(req.params.id, handleGetTraveler);
 });
 
 router.post('/addFriend', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+    let handleGetTraveler = (traveler) => {
         if (!traveler.friendIds) traveler.friendIds = [];
         if (!traveler.friendInvitations) traveler.friendInvitations = [];
 
@@ -66,7 +65,7 @@ router.post('/addFriend', function(req, res, next) {
         getTraveler(req.body.friendId, handleGetOtherTraveler);
     }
 
-    handleGetOtherTraveler = (traveler) => {
+    let handleGetOtherTraveler = (traveler) => {
         // Traveler invited must exist
         if (!traveler) {
             res.sendStatus(404);
@@ -96,7 +95,7 @@ router.post('/addFriend', function(req, res, next) {
         updateTraveler(traveler, handleUpdateTraveler);
     }
 
-    handleUpdateTraveler = (error) => {
+    let handleUpdateTraveler = (error) => {
         if (error) res.sendStatus(401);
         else res.sendStatus(200);
     }
@@ -117,7 +116,7 @@ router.post('/addFriend', function(req, res, next) {
 });
 
 router.delete('/removeFriend', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+    let handleGetTraveler = (traveler) => {
         var friendIds = [];
         if (!traveler.friendIds) traveler.friendIds = [];
         for (const friend of traveler.friendIds) {
@@ -127,9 +126,9 @@ router.delete('/removeFriend', function(req, res, next) {
         updateTraveler({ id: req.body.id, friendIds}, handleUpdateTraveler);
     }
 
-    handleUpdateTraveler = (error) => {}
+    let handleUpdateTraveler = (error) => {}
 
-    handleGetFriend = (traveler) => {
+    let handleGetFriend = (traveler) => {
         var friendIds = [];
         if (!traveler.friendIds) traveler.friendIds = [];
         for (const friend of traveler.friendIds) {
@@ -139,7 +138,7 @@ router.delete('/removeFriend', function(req, res, next) {
         updateTraveler({ id: req.body.friendId, friendIds}, handleUpdateFriend);
     }
 
-    handleUpdateFriend = (error) => {
+    let handleUpdateFriend = (error) => {
         if (error) res.sendStatus(401);
         else res.sendStatus(200);
     }
@@ -149,7 +148,7 @@ router.delete('/removeFriend', function(req, res, next) {
 });
 
 router.post('/acceptFriend', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+    let handleGetTraveler = (traveler) => {
         var newInvites = [];
         for (const invite of traveler.friendInvitations) {
             if (invite !== req.body.friendId) newInvites.push(invite);
@@ -162,16 +161,16 @@ router.post('/acceptFriend', function(req, res, next) {
         updateTraveler(traveler, handleUpdateTraveler);
     }
 
-    handleUpdateTraveler = (error) => {}
+    let handleUpdateTraveler = (error) => {}
 
-    handleGetFriend= (friend) => {
+    let handleGetFriend= (friend) => {
         if (!friend.friendIds) friend.friendIds = [];
         friend.friendIds.push(req.body.travelerId);
         
         updateTraveler(friend, handleUpdateFriend);
     }
 
-    handleUpdateFriend = (error) => {
+    let handleUpdateFriend = (error) => {
         if (error) res.sendStatus(401);
         else res.sendStatus(200);
     }
@@ -181,7 +180,7 @@ router.post('/acceptFriend', function(req, res, next) {
 });
 
 router.post('/rejectFriend', function(req, res, next) {
-    handleGetTraveler = (traveler) => {
+    let handleGetTraveler = (traveler) => {
         var newInvites = [];
         for (const invite of traveler.friendInvitations) {
             if (invite !== req.body.friendId) newInvites.push(invite);
@@ -191,7 +190,7 @@ router.post('/rejectFriend', function(req, res, next) {
         updateTraveler(traveler, handleUpdateTraveler);
     }
 
-    handleUpdateTraveler = (error) => {
+    let handleUpdateTraveler = (error) => {
         if (error) res.sendStatus(401);
         else res.sendStatus(200);
     }

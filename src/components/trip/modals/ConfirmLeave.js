@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
 
 class ConfirmLeave extends Component {
-  constructor(props) {
-    super(props);
-  }
+
 
   leaveTrip = (event) => {
       event.preventDefault();
@@ -14,13 +12,13 @@ class ConfirmLeave extends Component {
         isTripLeader: this.props.isTripLeader(),
       };
       fetch("/trip/leaveTrip", {
-          method: "POST",
+          method: "PUT",
           headers: {
               "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
       }).then((res) => {
-          this.props.redirectTrip();
+          this.props.switchPage("trips");
       });
   };
 

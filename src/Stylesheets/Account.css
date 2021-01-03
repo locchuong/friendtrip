@@ -1,3 +1,9 @@
+.account-page-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
 .settingsList {
     list-style: none;
     background-color: #FFFFFF;
@@ -30,4 +36,10 @@
 }
 .editBtn {
     height: 24px;
+}
+strong {
+    font-size: calc(0.25vw + 0.75rem);
+}
+p {
+    font-size: calc(0.25vw + 0.75rem);
 }
